@@ -196,6 +196,6 @@ app.delete('/team', (req, res) => { deleteTeam(db, req, res) })
 
 
 //Server running on port 3001
-app.listen(3001, () => {
+app.listen(process.env.PORT || 3001, () => {
     console.log('Server running')
 })
