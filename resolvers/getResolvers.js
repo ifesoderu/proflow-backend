@@ -5,7 +5,7 @@ const getAllProjects = (db, req, res) => {
     db.select('*').from('projects').then(data => {
         return res.status(200).json({ success: true, data })
     }).catch(err => {
-        return res.status(400).json({ success: false, data: error })
+        return res.status(400).json({ success: false, data: err })
     })
 }
 
