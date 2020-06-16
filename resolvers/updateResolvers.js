@@ -65,3 +65,23 @@ module.exports = {
     updateProject,
     updateTeam
 }
+
+    < DndProvider backend = { HTML5Backend } >
+        <section style={classes.board}>
+            {channels.map(channel => (
+                <KanbanColumn key={channel} status={channel} changeTaskStatus={changeTaskStatus}>
+                    <div style={classes.column}>
+                        <div style={classes.columnHead}>{labelsMap[channel]}</div>
+                        <div>
+                            {tasks.filter(item => item.status === channel)
+                                .map(item => (
+                                    <KanbanItem key={item._id} id={item._id}>
+                                        <div style={classes.item}>{item.title}</div>
+                                    </KanbanItem>
+                                ))}
+                        </div>
+                    </div>
+                </KanbanColumn>
+            ))}
+        </section>
+</DndProvider >
