@@ -11,12 +11,12 @@ const signJWTToken = (email) => {
 const loginMember = (db, bcrypt, req, res) => {
     console.log(req.body)
     const { email, password } = req.body;
-    if (email.trim() === '') return response.status(400).json({ success: false, message: "Kindly fill all fields" })
+    if (email.trim() === '') return res.status(400).json({ success: false, message: "Kindly fill all fields" })
     db.select('*')
         .from('members')
         .where('email', email)
         .then(data => {
-            if (data.length !== 1) return response.status(400).json({ success: false, message: "unable to log in" })
+            if (data.length !== 1) return res.status(400).json({ success: false, message: "unable to log in" })
             // const isValid = bcrypt.compareSync(password, data[0].password)
             const isValid = password === data[0].password
             if (isValid) {
