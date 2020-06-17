@@ -78,6 +78,7 @@ const {
     deleteTeam
 } = require('./resolvers/deleteResolver')
 
+const { requireAuth } = require('./middleware/authentication')
 
 //ROUTES
 app.get('/', (req, res) => {
@@ -102,7 +103,7 @@ app.get('/tasks/:pid/:sid', (req, res) => { getTasksBySectionAndProjectId(db, re
 app.get('/task/:id', (req, res) => { getTaskById(db, req, res) })
 
 //Get tasks by member id
-app.get('/personaltasks/:id', (req, res) => { getPersonalTasks(db, req, res) })
+app.get('/personaltasks/:email', (req, res) => { getPersonalTasks(db, req, res) })
 
 //Get sections of a project
 app.get('/sections/:pid', (req, res) => { getProjectSections(db, req, res) })

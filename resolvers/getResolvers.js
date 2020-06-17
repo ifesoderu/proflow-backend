@@ -45,7 +45,7 @@ const getTasksBySectionAndProjectId = (db, req, res) => {
 const getPersonalTasks = (db, req, res) => {
     db.select('*')
         .from('task_assignee')
-        .where('member_email', parseInt(req.params.email, 10))
+        .where('member_email', req.params.email)
         .then(data => {
             return res.status(200).json({ success: true, data })
         }).catch(err => {
