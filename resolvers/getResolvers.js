@@ -64,17 +64,19 @@ const getTaskById = (db, req, res) => {
 }
 
 const getTasksByIds = (db, req, res) => {
-    return getPersonalTasks(db, req, res).then(({ data }) => {
-        const task_ids = data.map(id => parseInt(id, 10));
-        return db.select('*').from('tasks').whereIn('id', [...task_ids]).then(data => {
+    db.select('task_id')
+        .from('task_assignee')
+        .where('member_email', req.params.email)
+        .then(data => {
+            const task_ids = data.map(id => parseInt(id, 10));
+            return db.select('*').from('tasks').whereIn('id', [...task_ids])
+        }).then(data => {
             return res.status(200).json({ success: true, data: data })
-        }).catch(err => {
-            return res.status(400).json({ success: false, data: "Could not get task" })
         })
-    }).catch(e => {
-        console.log(e)
-        return res.status(400).json({ success: false, data: "Could not get task" })
-    })
+        .catch(err => {
+            console.log(err)
+            return res.status(400).json({ success: false, data: "Could not get tasks" })
+        })
 }
 
 const getProjectSections = (db, req, res) => {
