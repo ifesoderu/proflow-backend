@@ -98,7 +98,7 @@ app.get('/teamprojects/:id', (req, res) => { getTeamProjects(db, req, res) })
 //Get tasks by section id and project id
 app.get('/tasks/:pid/:sid', (req, res) => { getTasksBySectionAndProjectId(db, req, res) })
 
-//Get tasks by section id and project id
+//Get task by id
 app.get('/task/:id', (req, res) => { getTaskById(db, req, res) })
 
 //Get tasks by member id
