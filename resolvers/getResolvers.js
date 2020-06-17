@@ -65,15 +65,17 @@ const getTaskById = (db, req, res) => {
 
 const getTasksByIds = (db, req, res) => {
     db.transaction(trx => {
-        trx('task_assignee')
-            .select('task_id')
+        trx.select('task_id')
+            .from('task_assignee')
             .where('member_email', req.params.email)
             .then(data => {
+                console.log(data)
                 const task_ids = data.map(id => parseInt(id, 10));
                 return trx('tasks')
                     .select('*')
                     .whereIn('id', [...task_ids])
                     .then(data => {
+                        console.log(data)
                         return res.status(200).json({ success: true, data: data })
                     }).then(trx.commit)
                     .catch(trx.rollback)
