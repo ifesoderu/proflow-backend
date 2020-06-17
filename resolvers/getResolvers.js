@@ -68,9 +68,8 @@ const getTasksByIds = (db, req, res) => {
         trx.select('task_id')
             .from('task_assignee')
             .where('member_email', req.params.email)
-            .then(data => {
-                console.log(data)
-                const task_ids = data.map(id => parseInt(id, 10));
+            .then((data) => {
+                const task_ids = data.map(({ task_id }) => parseInt(task_id, 10));
                 return trx('tasks')
                     .select('*')
                     .whereIn('id', [...task_ids])
