@@ -43,7 +43,7 @@ const getTasksBySectionAndProjectId = (db, req, res) => {
 
 // Get tasks that have been assigned
 const getPersonalTasks = (db, req, res) => {
-    db.select('*')
+    db.select('task_id')
         .from('task_assignee')
         .where('member_email', req.params.email)
         .then(data => {
@@ -58,6 +58,15 @@ const getPersonalTasks = (db, req, res) => {
 const getTaskById = (db, req, res) => {
     db.select('*').from('tasks').where('id', parseInt(req.params.id, 10)).then(data => {
         return res.status(200).json({ success: true, data: data[0] })
+    }).catch(err => {
+        return res.status(400).json({ success: false, data: "Could not get task" })
+    })
+}
+
+const getTasksByIds = (db, req, res) => {
+    const task_ids = req.params.ids.map(id => parseInt(id, 10));
+    db.select('*').from('tasks').whereIn('id', [...task_ids]).then(data => {
+        return res.status(200).json({ success: true, data: data })
     }).catch(err => {
         return res.status(400).json({ success: false, data: "Could not get task" })
     })
@@ -174,7 +183,7 @@ const getTeam = (db, req, res) => {
 
 module.exports = {
     getProjectById, getTeamProjects, getAllProjects,
-    getPersonalTasks, getTasksBySectionAndProjectId, getTaskById,
+    getPersonalTasks, getTasksBySectionAndProjectId, getTaskById, getTasksByIds,
     getProjectSections, getSection,
     getProjectComments,
     getAllMembers, getMember, getAssignedMembers, getTeamMembers,
