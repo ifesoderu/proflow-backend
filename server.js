@@ -104,7 +104,7 @@ app.get('/task/:id', (req, res) => { getTaskById(db, req, res) })
 
 
 //Get tasks by ids
-app.get('/task/:ids', (req, res) => { getTasksByIds(db, req, res) })
+app.get('/tasksbyids/:ids', (req, res) => { getTasksByIds(db, req, res) })
 
 //Get tasks by member id
 app.get('/personaltasks/:email', (req, res) => { getPersonalTasks(db, req, res) })
