@@ -16,7 +16,7 @@ const loginMember = (db, bcrypt, req, res) => {
         .from('members')
         .where('email', email)
         .then(data => {
-            if (data.length !== 1) return res.status(400).json({ success: false, message: "unable to log in" })
+            if (data.length !== 1) return res.status(400).json({ success: false, message: "Invalid email or password" })
             // const isValid = bcrypt.compareSync(password, data[0].password)
             const isValid = password === data[0].password
             if (isValid) {
@@ -54,8 +54,12 @@ const createTeam = (db, req, res) => {
             }
             return res.status(201).json(response)
         }).catch(err => {
-            console.log(err)
-            return res.status(400).json("Could not create team")
+            const response = {
+                success: false,
+                message: "Team was not created",
+                data: null
+            }
+            return res.status(400).json(response)
         })
 }
 
