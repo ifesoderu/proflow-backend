@@ -64,10 +64,15 @@ const getTaskById = (db, req, res) => {
 }
 
 const getTasksByIds = (db, req, res) => {
-    const task_ids = req.params.ids.map(id => parseInt(id, 10));
-    db.select('*').from('tasks').whereIn('id', [...task_ids]).then(data => {
-        return res.status(200).json({ success: true, data: data })
-    }).catch(err => {
+    return getPersonalTasks(db, req, res).then(({ data }) => {
+        const task_ids = data.map(id => parseInt(id, 10));
+        return db.select('*').from('tasks').whereIn('id', [...task_ids]).then(data => {
+            return res.status(200).json({ success: true, data: data })
+        }).catch(err => {
+            return res.status(400).json({ success: false, data: "Could not get task" })
+        })
+    }).catch(e => {
+        console.log(e)
         return res.status(400).json({ success: false, data: "Could not get task" })
     })
 }
