@@ -48,7 +48,7 @@ const createTeam = (db, req, res) => {
                 .returning('*')
                 .then(team => {
                     trx('team_membership')
-                        .insert({ member_email, id: team.id })
+                        .insert({ member_email, team_id: team.id })
                         .then(trx.commit)
                         .catch(trx.rollback)
                     const response = {
