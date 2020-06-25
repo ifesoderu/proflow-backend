@@ -25,10 +25,11 @@ app.use(cors(
 //Resolvers
 const {
     // Project GET Resolvers
-    getAllProjects, getProjectById, getTeamProjects,
+    getAllProjects, getProjectById, getTeamProjects, getMemberProjects,
 
     //Task GET Resolvers
-    getPersonalTasks, getTasksBySectionAndProjectId, getTaskById, getTasksByIds,
+    getPersonalTasks, getTasksBySectionsAndProjectId, getTaskById, getTasksByIds, getFavouritedProjects,
+
 
     //Section GET Resolvers
     getSection, getProjectSections,
@@ -40,14 +41,14 @@ const {
     getAllMembers, getMember, getAssignedMembers, getTeamMembers,
 
     // Team GET Resolvers
-    getAllTeams, getTeam
+    getAllTeams, getTeam, getJoinedTeams,
 } = require('./resolvers/getResolvers')
 
 const {
     //Team
     createTeam,
     // Project 
-    createProject,
+    createProject, favouriteProject,
     //Member
     loginMember, assignMemberToTask, addMemberToTeam,
     //Section
@@ -74,7 +75,7 @@ const {
     deleteTeamMember,
     deleteSection,
     deleteTask,
-    deleteProject,
+    unFavouriteProject, deleteProject,
     deleteTeam
 } = require('./resolvers/deleteResolver')
 
@@ -88,53 +89,62 @@ app.get('/', (req, res) => {
 //-----GET ROUTES ------//  
 
 //Get all projects
-app.get('/projects', (req, res) => { getAllProjects(db, req, res) })
+app.get('/projects', requireAuth, requireAuth, (req, res) => { getAllProjects(db, req, res) })
 
 //Get project by project id
-app.get('/project/:id', (req, res) => { getProjectById(db, req, res) })
+app.get('/project/:id', requireAuth, (req, res) => { getProjectById(db, req, res) })
 
 //Get project by team id
-app.get('/teamprojects/:id', (req, res) => { getTeamProjects(db, req, res) })
+app.get('/teamprojects/:id', requireAuth, (req, res) => { getTeamProjects(db, req, res) })
+
+//Get project by team id
+app.get('/memberprojects/:email', requireAuth, (req, res) => { getMemberProjects(db, req, res) })
 
 //Get tasks by section id and project id
-app.get('/tasks/:pid/:sid', (req, res) => { getTasksBySectionAndProjectId(db, req, res) })
+app.get('/tasks/:pid', requireAuth, (req, res) => { getTasksBySectionsAndProjectId(db, req, res) })
 
 //Get task by id
-app.get('/task/:id', (req, res) => { getTaskById(db, req, res) })
+app.get('/task/:id', requireAuth, (req, res) => { getTaskById(db, req, res) })
 
 
 //Get tasks by ids
-app.get('/tasksbyids/:email', (req, res) => { getTasksByIds(db, req, res) })
+app.get('/tasksbyids/:email', requireAuth, (req, res) => { getTasksByIds(db, req, res) })
 
 //Get tasks by member id
-app.get('/personaltasks/:email', (req, res) => { getPersonalTasks(db, req, res) })
+app.get('/personaltasks/:email', requireAuth, (req, res) => { getPersonalTasks(db, req, res) })
 
 //Get sections of a project
-app.get('/sections/:pid', (req, res) => { getProjectSections(db, req, res) })
+app.get('/sections/:pid', requireAuth, (req, res) => { getProjectSections(db, req, res) })
 
 //Get a section
-app.get('/section/:id', (req, res) => { getSection(db, req, res) })
+app.get('/section/:id', requireAuth, (req, res) => { getSection(db, req, res) })
 
 //Get comments of a project
-app.get('/comments/:pid', (req, res) => { getProjectComments(db, req, res) })
+app.get('/comments/:pid', requireAuth, (req, res) => { getProjectComments(db, req, res) })
 
 // Get all members
-app.get('/members', (req, res) => { getAllMembers(db, req, res) })
+app.get('/members', requireAuth, (req, res) => { getAllMembers(db, req, res) })
 
 // Get all members assigned to a task
-app.get('/assignedmembers/:id', (req, res) => { getAssignedMembers(db, req, res) })
+app.get('/assignedmembers/:id', requireAuth, (req, res) => { getAssignedMembers(db, req, res) })
 
 // Get all members added to a team with team id
-app.get('/teammembers/:id', (req, res) => { getTeamMembers(db, req, res) })
+app.get('/teammembers/:id', requireAuth, (req, res) => { getTeamMembers(db, req, res) })
 
 // Get one member
-app.get('/member/:id', (req, res) => { getMember(db, req, res) })
+app.get('/member/:id', requireAuth, (req, res) => { getMember(db, req, res) })
 
 // Get all teams
-app.get('/teams', (req, res) => { getAllTeams(db, req, res) })
+app.get('/teams', requireAuth, (req, res) => { getAllTeams(db, req, res) })
 
 // Get all teams
-app.get('/team/:id', (req, res) => { getTeam(db, req, res) })
+app.get('/team/:id', requireAuth, (req, res) => { getTeam(db, req, res) })
+
+// Get all teams
+app.get('/joinedteams/:email', requireAuth, (req, res) => { getJoinedTeams(db, req, res) })
+
+// Get all favourited projects using member email
+app.get('/favouritedprojects/:email', requireAuth, (req, res) => { getFavouritedProjects(db, req, res) })
 
 
 
@@ -163,6 +173,9 @@ app.post('/assignmember', (req, res) => { assignMemberToTask(db, req, res) })
 
 // Assign Member to team
 app.post('/teammember', (req, res) => { addMemberToTeam(db, req, res) })
+
+// Add project to favourite
+app.post('/favouriteproject', (req, res) => { favouriteProject(db, req, res) })
 
 
 
@@ -197,6 +210,9 @@ app.delete('/section', (req, res) => { deleteSection(db, req, res) })
 
 // Delete a project
 app.delete('/project', (req, res) => { deleteProject(db, req, res) })
+
+// Remove project from favourite
+app.delete('/unfavouriteproject', (req, res) => { unFavouriteProject(db, req, res) })
 
 // Delete a team
 app.delete('/team', (req, res) => { deleteTeam(db, req, res) })

@@ -9,7 +9,6 @@ const signJWTToken = (email) => {
 }
 
 const loginMember = (db, bcrypt, req, res) => {
-    console.log(req.body)
     const { email, password } = req.body;
     if (email.trim() === '') return res.status(400).json({ success: false, message: "Kindly fill all fields" })
     db.select('*')
@@ -35,7 +34,6 @@ const loginMember = (db, bcrypt, req, res) => {
 
             }
         }).catch(err => {
-            console.log(err)
             return response.status(400).json("Login not successfu;")
         })
 }
@@ -83,7 +81,6 @@ const createProject = (db, req, res) => {
                     }
                     return res.status(201).json(response)
                 }).catch(err => {
-                    console.log(err)
                     return res.status(400).json("Could not create project")
                 })
         }
@@ -104,7 +101,6 @@ const createSection = (db, req, res) => {
             }
             return res.status(201).json(response)
         }).catch(err => {
-            console.log(err)
             return res.status(400).json("Could not create section")
         })
 }
@@ -123,7 +119,6 @@ const createTask = (db, req, res) => {
             }
             return res.status(201).json(response)
         }).catch(err => {
-            console.log(err)
             return res.status(400).json("Could not create Task")
         })
 }
@@ -139,9 +134,8 @@ const createComment = (db, req, res) => {
                 message: "Comment successfully created",
                 data: comment
             }
-            return res.status(201).json(response)
+            Promise.resolve(res.status(201).json(response))
         }).catch(err => {
-            console.log(err)
             return res.status(400).json("Could not create Comment")
         })
 }
@@ -159,8 +153,23 @@ const assignMemberToTask = (db, req, res) => {
             }
             return res.status(201).json(response)
         }).catch(err => {
-            console.log(err)
             return res.status(400).json("Could not create assign member")
+        })
+}
+
+const favouriteProject = (db, req, res) => {
+    db('favourited_projects')
+        .insert({ ...req.body })
+        .returning('project_id')
+        .then(favouritedProjectID => {
+            const response = {
+                success: true,
+                message: "Project successfully favourited",
+                data: favouritedProjectID
+            }
+            return res.status(201).json(response)
+        }).catch(err => {
+            return res.status(400).json("Project could not be favourited")
         })
 }
 
@@ -177,7 +186,6 @@ const addMemberToTeam = (db, req, res) => {
             }
             return res.status(201).json(response)
         }).catch(err => {
-            console.log(err)
             return res.status(400).json("Could not create add member")
         })
 }
@@ -188,6 +196,7 @@ module.exports = {
     assignMemberToTask,
     addMemberToTeam,
     createProject,
+    favouriteProject,
     createSection,
     createTask,
     createComment

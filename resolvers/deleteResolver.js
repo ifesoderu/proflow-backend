@@ -13,6 +13,18 @@ const deleteAssignedMember = (db, req, res) => {
             return res.status(400).json({ success: false, message: "Couldn't remove resource" })
         })
 }
+const unFavouriteProject = (db, req, res) => {
+    const { member_email, project_id } = req.body;
+    db('favourited_projects')
+        .where({ member_email, project_id })
+        .del()
+        .then(data => {
+            return res.status(200).json({ success: true, message: 'Project successfully removed from favourites', data: project_id })
+        }).catch(e => {
+            return res.status(400).json({ success: false, message: "Couldn't remove project from favourites" })
+        })
+}
+
 const deleteTeamMember = (db, req, res) => {
     const { member_email, team_id } = req.body;
     db('team_membership')
@@ -57,13 +69,14 @@ const deleteProject = (db, req, res) => {
             return res.status(400).json({ success: false, message: "Couldn't remove resource" })
         })
 }
+
 const deleteTeam = (db, req, res) => {
     const { id } = req.body;
     db('teams')
         .where({ id })
         .del()
         .then(data => {
-            return res.status(200).json({ success: true, message: 'Resource successfully removed' })
+            return res.status(200).end()
         }).catch(e => {
             return res.status(400).json({ success: false, message: "Couldn't remove resource" })
         })
@@ -75,6 +88,7 @@ module.exports = {
     deleteTeamMember,
     deleteSection,
     deleteTask,
+    unFavouriteProject,
     deleteProject,
     deleteTeam
 }

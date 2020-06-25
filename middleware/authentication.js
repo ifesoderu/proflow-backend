@@ -1,14 +1,14 @@
 const jwt = require('jsonwebtoken')
 
 const requireAuth = (req, res, next) => {
-    const { authorization } = req.headers
-    const { email } = req.params
-    if (!authorization) return res.status(401).json('Unauthorized')
-    jwt.verify(authorization, 'THIS_IS_A_JWT_TOKEN', (err, decoded) => {
-        console.log(email)
+    const { authorization, useremail } = req.headers
+    if (!authorization) return res.status(401).json({ success: false, message: "Unauthorized" })
+    jwt.verify(authorization, 'MYJSON_WEB_TOKEN_SECRET', (err, decoded) => {
         if (err) {
-            return res.status(401).json('Unauthorized')
+            console.log(err)
+            return res.status(401).json({ success: false, message: "Unauthorized" })
         }
+        if (decoded.data !== useremail) return res.status(401).json({ success: false, message: "Unauthorized" })
         return next()
     });
 }

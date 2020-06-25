@@ -1,13 +1,14 @@
 const updateTask = (db, req, res) => {
     const { id, title, description, completed, due_date, section_id } = req.body;
-    if (title.trim() === "" || description.trim() === "" || completed === "" || due_date.trim() === "") {
+    // if (title.trim() === "" || description.trim() === "" || completed === "" || due_date.trim() === "") {
+    if (title.trim() === "") {
         return res.status(400).json({ success: false, message: "Fill up the fields" })
     }
     db('tasks')
         .where({ id })
         .update({ title, description, completed, due_date, section_id }, ['*'])
         .then(updatedTask => {
-            return res.status(200).json({ success: true, message: "update successful", data: updatedTask })
+            return res.status(200).json({ success: true, message: "update successful", data: updatedTask[0] })
         }).catch(e => {
             return res.status(400).json({ success: false, message: "Update not successful" })
         })
