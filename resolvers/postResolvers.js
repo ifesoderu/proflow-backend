@@ -39,26 +39,34 @@ const loginMember = (db, bcrypt, req, res) => {
 }
 
 const createTeam = (db, req, res) => {
-    const { name, description } = req.body
+    const { name, description, member_email } = req.body
     if (name.trim() === "") return response.status(400).json({ success: false, message: "Kindly fill all fields" })
-    db('teams')
-        .insert({ name, description })
-        .returning('*')
-        .then(team => {
-            const response = {
-                success: true,
-                message: "Team successfully created",
-                data: team
-            }
-            return res.status(201).json(response)
-        }).catch(err => {
-            const response = {
-                success: false,
-                message: "Team was not created",
-                data: null
-            }
-            return res.status(400).json(response)
-        })
+    db.transaction(
+        trx => {
+            trx('teams')
+                .insert({ name, description })
+                .returning('*')
+                .then(team => {
+                    trx('team_membership')
+                        .insert({ member_email, id: team.id })
+                        .then(trx.commit)
+                        .catch(trx.rollback)
+                    const response = {
+                        success: true,
+                        message: "Team successfully created",
+                        data: team
+                    }
+                    return res.status(201).json(response)
+                }).catch(err => {
+                    const response = {
+                        success: false,
+                        message: "Team was not created",
+                        data: null
+                    }
+                    return res.status(400).json(response)
+                })
+        }
+    )
 }
 
 const createProject = (db, req, res) => {
