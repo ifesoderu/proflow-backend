@@ -9,7 +9,7 @@ var bcrypt = require('bcryptjs');
 
 const db = require('./knex');
 
-//Call the express module
+
 const app = express();
 
 
