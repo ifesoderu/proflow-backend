@@ -4,9 +4,6 @@ const bodyParser = require('body-parser')
 const cors = require('cors');
 var bcrypt = require('bcryptjs');
 
-// Middleware
-// const auth = require('./middleware/authentication')
-
 const db = require('./knex');
 
 
